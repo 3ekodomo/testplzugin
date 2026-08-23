@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Find uploaded ZIP
+      - name: Find and save uploaded ZIP
         id: zip
         run: |
           ZIP=$(find . -maxdepth 1 -type f -name "*.zip" | head -n 1)
@@ -29,8 +29,10 @@ jobs:
             exit 1
           fi
 
-          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
           echo "Found: $ZIP"
+
+          # Save ZIP outside the repository before cleaning it
+          cp "$ZIP" /tmp/upload.zip
 
       - name: Delete everything except .github
         run: |
@@ -40,39 +42,37 @@ jobs:
             ! -name ".github" \
             -exec rm -rf {} +
 
-          echo "Root cleaned."
-          echo "Preserved:"
-          ls -la
+          echo "Repository root cleaned."
 
       - name: Extract ZIP to repository root
         run: |
-          ZIP="${{ steps.zip.outputs.zip }}"
-
           mkdir -p /tmp/zip-extract
-          unzip -o "$ZIP" -d /tmp/zip-extract
+
+          unzip -o /tmp/upload.zip -d /tmp/zip-extract
 
           shopt -s dotglob nullglob
           ITEMS=(/tmp/zip-extract/*)
 
-          # If ZIP contains a single top-level folder,
-          # use that folder's contents.
+          # If ZIP contains one top-level folder,
+          # extract that folder's contents instead.
           if [ "${#ITEMS[@]}" -eq 1 ] && [ -d "${ITEMS[0]}" ]; then
             SOURCE="${ITEMS[0]}"
           else
             SOURCE="/tmp/zip-extract"
           fi
 
-          # Never allow the ZIP to replace the workflow folder.
+          # Don't allow ZIP to replace GitHub workflows
           rm -rf "$SOURCE/.github"
 
-          # Copy ZIP contents into repository root.
+          # Copy ZIP contents into repository root
           cp -a "$SOURCE"/. .
 
-      - name: Remove uploaded ZIP
+      - name: Remove ZIP
         run: |
+          rm -f /tmp/upload.zip
           find . -maxdepth 1 -type f -name "*.zip" -delete
 
-      - name: Commit and push changes
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
