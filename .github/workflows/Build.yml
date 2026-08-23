@@ -1,13 +1,9 @@
-name: Build and Release APK
+name: Build ImgBB Plugin
 
 on:
-  workflow_dispatch:
   push:
-    tags:
-      - "v*"
-
-permissions:
-  contents: write
+    branches: [ "**" ]
+  pull_request:
 
 jobs:
   build:
@@ -21,25 +17,18 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
+          cache: gradle
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build release APK
+        run: ./gradlew :plugin-btn-imgbb:assembleRelease --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          gradle-version: "8.0.2"
-
-      - name: Build APK
-        run: gradle assembleDebug --no-daemon
-
-      - name: Rename APK
-        run: |
-          cp app/build/outputs/apk/debug/app-debug.apk \
-             Zettel-Notes-ImgBB.apk
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ github.run_number }}
-          name: Zettel Notes ImgBB v${{ github.run_number }}
-          generate_release_notes: true
-          files: Zettel-Notes-ImgBB.apk
+          name: imgbb-plugin-release
+          path: plugin-btn-imgbb/build/outputs/apk/release/*.apk
+          if-no-files-found: error
