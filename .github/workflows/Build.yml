@@ -1,9 +1,11 @@
-name: Build ImgBB Plugin
+name: Build and Release APK
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "**" ]
-  pull_request:
+    tags:
+      - "v*"
+
 
 jobs:
   build:
