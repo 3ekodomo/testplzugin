@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,6 +36,9 @@ public class ButtonActivity extends AppCompatActivity {
 
     public static final String INTENT_EXTRA_INSERT_TEXT = "intent-extra-insert-text";
     public static final String ERROR_STRING = "intent-error";
+    private static final long MAX_UPLOAD_BYTES = 32L * 1024L * 1024L;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private ProgressBar progress;
     private TextView status;
@@ -52,19 +57,23 @@ public class ButtonActivity extends AppCompatActivity {
         TextView title = new TextView(this);
         title.setText("Upload image to ImgBB");
         title.setTextSize(20);
-        root.addView(title);
+        root.addView(title, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         status = new TextView(this);
         status.setText("\nChoose an image from your device.");
-        root.addView(status);
+        root.addView(status, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         Button choose = new Button(this);
         choose.setText("Choose image");
-        root.addView(choose);
+        root.addView(choose, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         progress = new ProgressBar(this);
         progress.setVisibility(ProgressBar.GONE);
-        root.addView(progress);
+        root.addView(progress, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         setContentView(root);
 
@@ -100,7 +109,7 @@ public class ButtonActivity extends AppCompatActivity {
 
         setLoading(true);
 
-        new Thread(() -> {
+        executor.execute(() -> {
             File temp = null;
             try {
                 String filename = getFileName(uri);
@@ -129,8 +138,9 @@ public class ButtonActivity extends AppCompatActivity {
                     long total = 0;
                     while ((n = in.read(buffer)) != -1) {
                         total += n;
-                        if (total > 32L * 1024L * 1024L) {
-                            throw new IllegalArgumentException("ImgBB allows images up to 32 MB");
+                        if (total > MAX_UPLOAD_BYTES) {
+                            throw new IllegalArgumentException(
+                                    "ImgBB allows images up to 32 MB");
                         }
                         out.write(buffer, 0, n);
                     }
@@ -149,21 +159,25 @@ public class ButtonActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ImgBBResponse> call,
                                            Response<ImgBBResponse> response) {
-                        if (finalTemp.exists()) {
-                            finalTemp.delete();
-                        }
+                        deleteQuietly(finalTemp);
 
-                        if (!response.isSuccessful() || response.body() == null
-                                || !response.body().success
-                                || response.body().data == null
-                                || response.body().data.url == null) {
-                            finishWithError("ImgBB upload failed (" + response.code() + ")");
+                        ImgBBResponse result = response.body();
+                        if (!response.isSuccessful()
+                                || result == null
+                                || !result.success
+                                || result.data == null
+                                || result.data.url == null
+                                || result.data.url.isEmpty()) {
+                            finishWithError(extractErrorMessage(response));
                             return;
                         }
 
-                        String url = response.body().data.url;
-                        String markdown = "![" + finalFilename + "](" + url + ")";
+                        String altText = result.data.displayUrl;
+                        if (altText == null || altText.isEmpty()) {
+                            altText = finalFilename;
+                        }
 
+                        String markdown = "![" + altText + "](" + result.data.url + ")";
                         setResult(RESULT_OK,
                                 new Intent().putExtra(INTENT_EXTRA_INSERT_TEXT, markdown));
                         finish();
@@ -171,21 +185,26 @@ public class ButtonActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<ImgBBResponse> call, Throwable t) {
-                        if (finalTemp.exists()) {
-                            finalTemp.delete();
-                        }
+                        deleteQuietly(finalTemp);
                         finishWithError("Upload failed: "
                                 + (t.getMessage() == null ? "network error" : t.getMessage()));
                     }
                 });
             } catch (Exception e) {
-                if (temp != null && temp.exists()) {
-                    temp.delete();
-                }
+                deleteQuietly(temp);
                 finishWithError(e.getMessage() == null
                         ? "Unable to read image" : e.getMessage());
             }
-        }).start();
+        });
+    }
+
+    private String extractErrorMessage(Response<ImgBBResponse> response) {
+        ImgBBResponse result = response.body();
+        if (result != null && result.error != null
+                && result.error.message != null && !result.error.message.isEmpty()) {
+            return "ImgBB upload failed: " + result.error.message;
+        }
+        return "ImgBB upload failed (" + response.code() + ")";
     }
 
     private void setLoading(boolean loading) {
@@ -204,28 +223,33 @@ public class ButtonActivity extends AppCompatActivity {
     }
 
     private String getFileName(Uri uri) {
-        Cursor cursor = getContentResolver().query(
+        try (Cursor cursor = getContentResolver().query(
                 uri,
                 new String[]{OpenableColumns.DISPLAY_NAME},
                 null,
                 null,
-                null);
-
-        if (cursor == null) {
-            return null;
-        }
-
-        try {
+                null)) {
+            if (cursor == null) {
+                return null;
+            }
             int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            return index >= 0 && cursor.moveToFirst()
-                    ? cursor.getString(index)
-                    : null;
-        } finally {
-            cursor.close();
+            return index >= 0 && cursor.moveToFirst() ? cursor.getString(index) : null;
+        }
+    }
+
+    private void deleteQuietly(File file) {
+        if (file != null && file.exists() && !file.delete()) {
+            // Best-effort cache cleanup.
         }
     }
 
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    @Override
+    protected void onDestroy() {
+        executor.shutdownNow();
+        super.onDestroy();
     }
 }

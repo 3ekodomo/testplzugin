@@ -12,6 +12,9 @@ public class ImgBBResponse {
     @SerializedName("data")
     public Data data;
 
+    @SerializedName("error")
+    public Error error;
+
     public static class Data {
         @SerializedName("url")
         public String url;
@@ -24,5 +27,13 @@ public class ImgBBResponse {
 
         @SerializedName("delete_url")
         public String deleteUrl;
+    }
+
+    public static class Error {
+        @SerializedName("message")
+        public String message;
+
+        @SerializedName("code")
+        public int code;
     }
 }

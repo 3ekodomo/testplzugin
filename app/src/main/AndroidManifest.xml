@@ -36,7 +36,12 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.eu.thedoc.zettelnotes.intent.buttons.imgbb.settings" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
     </application>
 </manifest>
