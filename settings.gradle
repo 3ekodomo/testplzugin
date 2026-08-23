@@ -5,14 +5,14 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
-
-rootProject.name = 'Zettel Notes ImgBB Plugin'
-include ':app'
+rootProject.name = "Zettel Notes ImgBB Plugin"
+include ':basemodule'
+include ':plugin-btn-imgbb'

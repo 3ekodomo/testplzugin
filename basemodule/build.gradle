@@ -1,0 +1,27 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'org.eu.thedoc.zettelnotes.plugins.base'
+    compileSdk rootProject.ext.compileSdk
+
+    defaultConfig {
+        minSdk rootProject.ext.minSdk
+        targetSdk rootProject.ext.targetSdk
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildFeatures {
+        buildConfig = false
+    }
+}
+
+dependencies {
+    api 'com.github.damionx7:Zettel-Notes-Plugin-Api:1.0.21'
+    implementation 'androidx.activity:activity:1.9.2'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.annotation:annotation:1.8.2'
+    implementation 'com.google.android.material:material:1.12.0'
+}
