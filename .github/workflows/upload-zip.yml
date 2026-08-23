@@ -1,0 +1,72 @@
+name: Upload ZIP to Root
+
+on:
+  push:
+    paths:
+      - "*.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-zip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find uploaded ZIP
+        id: zip
+        run: |
+          ZIP=$(find . -maxdepth 1 -type f -name "*.zip" | head -n 1)
+
+          if [ -z "$ZIP" ]; then
+            echo "No ZIP file found."
+            exit 1
+          fi
+
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "Found: $ZIP"
+
+      - name: Extract ZIP to repository root
+        run: |
+          ZIP="${{ steps.zip.outputs.zip }}"
+
+          mkdir -p /tmp/zip-extract
+          unzip -o "$ZIP" -d /tmp/zip-extract
+
+          # If ZIP contains a single top-level folder,
+          # use its contents instead of creating that folder.
+          shopt -s dotglob nullglob
+          ITEMS=(/tmp/zip-extract/*)
+
+          if [ "${#ITEMS[@]}" -eq 1 ] && [ -d "${ITEMS[0]}" ]; then
+            SOURCE="${ITEMS[0]}"
+          else
+            SOURCE="/tmp/zip-extract"
+          fi
+
+          cp -a "$SOURCE"/. .
+
+      - name: Remove ZIP files
+        run: |
+          find . -maxdepth 1 -type f -name "*.zip" -delete
+
+      - name: Commit extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Extract uploaded ZIP to root"
+          git push
