@@ -16,3 +16,11 @@ dependencyResolutionManagement {
 rootProject.name = "Zettel Notes ImgBB Plugin"
 include ':basemodule'
 include ':plugin-btn-imgbb'
+
+
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_8
+        targetCompatibility JavaVersion.VERSION_8
+    }
+}
