@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'org.eu.thedoc.zettelnotes.buttons.imgbb'
-    compileSdk 35
+    compileSdk 34
 
     defaultConfig {
         applicationId 'org.eu.thedoc.zettelnotes.buttons.imgbb'
         minSdk 21
-        targetSdk 35
+        targetSdk 34
         versionCode 1
         versionName '1.0.0'
         
