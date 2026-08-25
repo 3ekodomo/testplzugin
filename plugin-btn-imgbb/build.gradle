@@ -4,9 +4,19 @@ plugins {
 
 android {
     namespace 'org.eu.thedoc.zettelnotes.buttons.imgbb'
+    compileSdk 34
 
     defaultConfig {
         applicationId 'org.eu.thedoc.zettelnotes.buttons.imgbb'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -14,16 +24,7 @@ dependencies {
     implementation "androidx.activity:activity:1.9.2"
     implementation "androidx.appcompat:appcompat:1.7.0"
     
-    
     implementation project(':basemodule')
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-}
-
-
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
 }
