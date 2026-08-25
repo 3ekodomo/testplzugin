@@ -16,7 +16,6 @@ android {
 
     buildTypes {
         release {
-            // This tricks Android into signing the Release APK with the default debug key
             signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -36,4 +35,7 @@ dependencies {
     implementation project(':basemodule')
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    
+    // Crucial: Exclude the API from the final APK
+    compileOnly 'com.github.damionx7:Zettel-Notes-Plugin-Api:1.0.21'
 }
