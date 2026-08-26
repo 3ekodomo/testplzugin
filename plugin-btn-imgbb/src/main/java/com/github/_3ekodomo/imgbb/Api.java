@@ -1,4 +1,4 @@
-package org.eu.thedoc.zettelnotes.buttons.imgbb;
+package com.github._3ekodomo.imgbb;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

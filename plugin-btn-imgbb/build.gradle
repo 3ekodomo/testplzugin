@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'org.eu.thedoc.zettelnotes.buttons.imgbb'
+    namespace 'com.github._3ekodomo.imgbb'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'org.eu.thedoc.zettelnotes.buttons.imgbb'
+        applicationId 'com.github._3ekodomo.imgbb'
         minSdk 24
         targetSdk 34
         versionCode 1
