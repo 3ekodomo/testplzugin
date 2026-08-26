@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "Zettel Notes ImgBB Plugin"
 include ':basemodule'
 include ':plugin-btn-imgbb'
+include ':zettel-api'
