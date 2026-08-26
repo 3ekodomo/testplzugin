@@ -13,4 +13,4 @@ Push the project to GitHub. The included workflow:
 
 No `local.properties`, signing key, external Zettel Notes source checkout, or local version catalog is required.
 
-The plugin uses the official Zettel Notes Plugin API dependency `com.github.damionx7:Zettel-Notes-Plugin-Api:1.0.21`.
+The plugin uses the official Zettel Notes Plugin API dependency `com.github.damionx7:Zettel-Notes-Plugin-Api:28`.
