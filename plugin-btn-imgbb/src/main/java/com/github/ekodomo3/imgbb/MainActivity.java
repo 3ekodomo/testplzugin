@@ -185,12 +185,6 @@ public class MainActivity
       itemView.addView(imageView);
       itemView.addView(textContainer);
 
-      itemView.setOnClickListener(v -> {
-          Intent intent = new Intent(MainActivity.this, ImagePreviewActivity.class);
-          intent.putExtra(ImagePreviewActivity.EXTRA_IMAGE_URI, uri);
-          startActivity(intent);
-      });
-
       String filename = getFileName(uri);
       if (filename == null || filename.trim().isEmpty()) {
         filename = "image";
