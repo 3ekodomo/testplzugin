@@ -37,5 +37,4 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     
     // Fix: Force JitPack to build the latest live commit from the master branch
-    compileOnly 'com.github.damionx7:Zettel-Notes-Plugin-Api:master-SNAPSHOT'
 }
