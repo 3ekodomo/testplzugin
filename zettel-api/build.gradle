@@ -1,0 +1,22 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'org.eu.thedoc.zettelnotes.api'
+    compileSdk 34
+    
+    defaultConfig {
+        minSdk 24
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    // Allows the interface to compile without bundling AndroidX
+    compileOnly 'androidx.activity:activity:1.9.2'
+}
