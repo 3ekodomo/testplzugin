@@ -1,4 +1,4 @@
-package com.github._3ekodomo.imgbb;
+package com.github.ekodomo3.imgbb;
 
 import android.os.Bundle;
 import android.text.InputType;
