@@ -36,6 +36,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     
-    // Fix: Updated to the latest stable JitPack release (v28)
-    compileOnly 'com.github.damionx7:Zettel-Notes-Plugin-Api:v28'
+    // Fix: Force JitPack to build the latest live commit from the master branch
+    compileOnly 'com.github.damionx7:Zettel-Notes-Plugin-Api:master-SNAPSHOT'
 }
