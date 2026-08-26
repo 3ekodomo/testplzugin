@@ -30,5 +30,5 @@ dependencies {
     implementation 'com.google.android.material:material:1.12.0'
     
     // Fix: Force JitPack to build the latest live commit from the master branch
-    compileOnly 'com.github.damionx7:Zettel-Notes-Plugin-Api:master-SNAPSHOT'
+    api 'com.github.damionx7:Zettel-Notes-Plugin-Api:1.0.21'
 }
