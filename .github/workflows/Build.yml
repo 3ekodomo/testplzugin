@@ -6,7 +6,6 @@ on:
     tags:
       - "v*"
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,8 +24,11 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
+      - name: Generate Release Keystore
+        run: keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-alias -storepass password123 -keypass password123 -dname "CN=ImgBB, OU=Plugin, O=Zettel, L=Mysuru, S=KA, C=IN"
+
       - name: Build Release APK
-        run: ./gradlew :plugin-btn-imgbb:assembleRelease --no-daemon
+        run: ./gradlew :plugin-btn-imgbb:assembleRelease -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/my-release-key.jks -Pandroid.injected.signing.store.password=password123 -Pandroid.injected.signing.key.alias=my-alias -Pandroid.injected.signing.key.password=password123 --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
