@@ -36,5 +36,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     
-    // Fix: Force JitPack to build the latest live commit from the master branch
+    // Links your local module without bundling it into the APK
+    compileOnly project(':zettel-api')
 }
