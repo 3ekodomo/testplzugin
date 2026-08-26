@@ -1,4 +1,4 @@
-package com.github._3ekodomo.imgbb;
+package com.github.ekodomo3.imgbb;
 
 import android.content.Intent;
 import android.database.Cursor;

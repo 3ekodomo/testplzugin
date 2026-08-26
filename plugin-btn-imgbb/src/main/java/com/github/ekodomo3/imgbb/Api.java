@@ -1,4 +1,4 @@
-package com.github._3ekodomo.imgbb;
+package com.github.ekodomo3.imgbb;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

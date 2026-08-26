@@ -1,4 +1,4 @@
-package com.github._3ekodomo.imgbb;
+package com.github.ekodomo3.imgbb;
 
 import android.app.Activity;
 import android.content.Intent;

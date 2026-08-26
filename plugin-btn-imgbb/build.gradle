@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.github._3ekodomo.imgbb'
+    namespace 'com.github.ekodomo3.imgbb'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.github._3ekodomo.imgbb'
+        applicationId 'com.github.ekodomo3.imgbb'
         minSdk 24
         targetSdk 34
         versionCode 1
