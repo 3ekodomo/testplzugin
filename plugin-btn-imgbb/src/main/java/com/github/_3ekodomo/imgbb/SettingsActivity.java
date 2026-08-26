@@ -1,4 +1,4 @@
-package org.eu.thedoc.zettelnotes.buttons.imgbb;
+package com.github._3ekodomo.imgbb;
 
 import android.os.Bundle;
 import android.text.InputType;
