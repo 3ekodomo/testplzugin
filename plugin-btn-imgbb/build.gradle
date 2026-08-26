@@ -16,7 +16,6 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -35,7 +34,4 @@ dependencies {
     implementation project(':basemodule')
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-    
-    // Links your local module without bundling it into the APK
-    compileOnly project(':zettel-api')
 }
