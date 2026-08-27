@@ -167,7 +167,14 @@ public class MainActivity
       executor.execute(() -> {
           Bitmap thumbnail = decodeSampledBitmapFromUri(uri, thumbnailSize, thumbnailSize);
           if (thumbnail != null) {
-              runOnUiThread(() -> imageView.setImageBitmap(thumbnail));
+              runOnUiThread(() -> {
+                  imageView.setImageBitmap(thumbnail);
+                  imageView.setOnClickListener(v -> {
+                      Intent previewIntent = new Intent(MainActivity.this, ImagePreviewActivity.class);
+                      previewIntent.putExtra("image_uri", uri.toString());
+                      startActivity(previewIntent);
+                  });
+              });
           }
       });
 
