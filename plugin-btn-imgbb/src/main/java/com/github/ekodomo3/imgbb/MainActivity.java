@@ -172,6 +172,10 @@ public class MainActivity
                   imageView.setOnClickListener(v -> {
                       Intent previewIntent = new Intent(MainActivity.this, ImagePreviewActivity.class);
                       previewIntent.putExtra("image_uri", uri.toString());
+                      if (cbCompress.isChecked()) {
+                          previewIntent.putExtra("compress", true);
+                          previewIntent.putExtra("quality", sbQuality.getProgress());
+                      }
                       startActivity(previewIntent);
                   });
               });
